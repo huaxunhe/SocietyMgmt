@@ -1,81 +1,105 @@
-# Society Management System - ServiceNow SDK Assistant
+---
+name: society-mgmt
+description: Society Management System project context and conventions
+---
 
-You are an expert assistant for the **Society Management System** ServiceNow application.
+# Society Management System - Project Context
 
-## App Identity
+## 1. App Identity
 - **Name**: Society Management System
-- **Scope Prefix**: `x_society`
-- **Scope ID**: `2f615807c5324c9d96440b479fc333ff`
-- **SDK Version**: `@servicenow/sdk` 4.5.0, `@servicenow/glide` 27.0.5
-- **Auth Alias**: (configured via `now-sdk auth`)
+- **ScopePrefix**: `x_664892_society_0`
+- **SDK Version**: `@servicenow/sdk` 4.5.0
+- **Auth Alias**: Default (uses `now-sdk` CLI authentication)
 
-## SDK Commands
-| Command | Script | Purpose |
-|---------|--------|---------|
-| Build | `npm run build` | Compiles the app and generates the update set |
-| Deploy | `npm run deploy` | Installs the app to the configured instance |
-| Transform | `npm run transform` | Converts existing instance metadata to SDK code |
-| Types | `npm run types` | Fetches type definitions from instance |
+## 2. SDK Commands
 
-## File Structure Rules
-- **Fluent APIs**: Place in `src/fluent/*.now.ts` files
-- **Tables**: Place in `src/fluent/tables/*.now.ts` files
-- **Entry Point**: `src/fluent/index.now.ts` exports all Fluent definitions
-- **Naming Convention**: Files must end in `.now.ts` for SDK recognition
-- **Table Definitions**: Export name must match table name (e.g., `export const x_society_resident = Table({ name: 'x_society_resident', ... })`)
-- **ChoiceColumn**: Use `{ choice_value: { label: 'Label' } }` format, not `{ value, label }`
-- **All artifacts** (tables, roles, ACLs, UI components, flows) are defined in `.now.ts` files
+| Command | Description |
+|---------|-------------|
+| `npm run build` | Compile TypeScript, bundle client/server code, generate update set artifact |
+| `npm run deploy` | Install/deploy the app to the connected ServiceNow instance |
+| `npm run transform` | Convert existing ServiceNow metadata to SDK format |
+| `npm run types` | Generate TypeScript type dependencies from instance |
+| `npm run dev` | Start local development mode with hot reload |
 
-## Core Tables
+## 3. File Structure Rules
 
-### Society Structure
-| Table | Label | Description |
-|-------|-------|-------------|
-| `x_society_society` | Society | Main society/community record |
-| `x_society_building` | Building | Buildings within a society |
-| `x_society_unit` | Unit | Individual apartments/units |
-| `x_society_resident` | Resident | Resident/owner/tenant information |
-| `x_society_resident_unit` | Resident Unit Association | Junction table linking residents to units |
+```
+src/
+├── fluent/
+│   ├── index.now.ts          # MUST export all tables/roles/scripts
+│   ├── roles.roles.ts        # Role definitions (*.roles.ts)
+│   ├── tables/
+│   │   ├── society.now.ts    # Table definitions (*.now.ts)
+│   │   ├── resident.now.ts
+│   │   ├── vehicle.now.ts
+│   │   ├── finance.now.ts
+│   │   └── facility.now.ts
+│   ├── server/
+│   │   ├── businessRules.ts  # Business rules
+│   │   ├── scheduledJobs.ts  # Scheduled jobs
+│   │   ├── SocietyUtils.ts   # Script includes
+│   │   └── MaintenanceBillingEngine.ts
+│   └── ui-pages/
+│       └── incident-manager.now.ts
+└── client/
+    ├── main.jsx              # Client entry point
+    ├── app.jsx               # Main app component
+    └── components/           # React components
+```
 
-### Vehicles & Parking
-| Table | Label | Description |
-|-------|-------|-------------|
-| `x_society_vehicle` | Vehicle | Vehicle registrations |
-| `x_society_parking_slot` | Parking Slot | Parking slot inventory and allocation |
+### Naming Conventions
+- Tables: `*.now.ts` in `tables/` folder
+- Roles: `*.roles.ts`
+- Server scripts: Any `.ts` file in `server/`
+- UI Pages: `*.now.ts` in `ui-pages/`
+- **Critical**: All exports must be re-exported from `index.now.ts`
 
-### Finance
-| Table | Label | Description |
-|-------|-------|-------------|
-| `x_society_maintenance_charge` | Maintenance Charge | Charge definitions (fixed/per sqft/per unit) |
-| `x_society_bill` | Maintenance Bill | Monthly maintenance bills/invoices |
-| `x_society_bill_line` | Bill Line Item | Individual charge line items on bills |
-| `x_society_payment` | Payment | Payment records received from residents |
-| `x_society_expense` | Expense | Society expense tracking |
+## 4. Core Tables
 
-### Facilities & Services
-| Table | Label | Description |
-|-------|-------|-------------|
-| `x_society_facility` | Facility | Amenities (clubhouse, gym, pool, etc.) |
-| `x_society_facility_booking` | Facility Booking | Facility reservation records |
-| `x_society_complaint` | Complaint | Service requests/complaints |
-| `x_society_notice` | Notice | Announcements/notices |
-| `x_society_visitor` | Visitor | Visitor management/check-in |
+| Table | Purpose |
+|-------|---------|
+| `x_664892_society_0_society` | Society/Community master record |
+| `x_664892_society_0_building` | Buildings within society |
+| `x_664892_society_0_unit` | Individual apartments/units |
+| `x_664892_society_0_resident` | Residents (owners/tenants) |
+| `x_664892_society_0_vehicle` | Vehicle parking records |
+| `x_664892_society_0_bill` | Maintenance bills |
+| `x_664892_society_0_payment` | Payment records |
+| `x_664892_society_0_expense` | Society expenses |
+| `x_664892_society_0_facility` | Facilities (gym, pool, etc.) |
+| `x_664892_society_0_facility_booking` | Facility reservations |
+| `x_664892_society_0_complaint` | Service requests/complaints |
+| `x_664892_society_0_notice` | Announcements |
+| `x_664892_society_0_visitor` | Visitor management |
 
-## User Roles
-| Role | Description |
-|------|-------------|
-| `x_society.admin` | Full admin access (scoped admin) |
-| `x_society.manager` | Committee members - manage residents, facilities, complaints |
-| `x_society.staff` | Security/maintenance staff - visitors, complaints |
-| `x_society.resident` | Standard resident - self-service access |
-| `x_society.finance` | Billing and payment management |
-| `x_society.facility_manager` | Facility and booking management |
+## 5. User Roles
 
-## Common Gotchas
-- Always prefix custom table names with `x_society_` (scope prefix)
-- All SDK artifacts require the `.now.ts` extension
-- Table export name must match the `name` property exactly
-- ChoiceColumn uses `{ value: { label: 'Label' } }` not `{ value: 'x', label: 'y' }`
-- Run `npm run types` after adding new tables to get type definitions
-- Use `now-sdk auth` to configure instance credentials before deploy
-- No `PhoneNumberColumn` available - use `StringColumn` with `maxLength: 20`
+| Role | Name | Access Level |
+|------|------|--------------|
+| `x_society.admin` | Administrator | Full access, scoped admin |
+| `x_society.manager` | Manager | Manage residents, facilities, complaints |
+| `x_society.staff` | Staff | Visitors, complaint updates, basic ops |
+| `x_society.resident` | Resident | Self-service: notices, bookings, bills |
+| `x_society.finance` | Finance | Bills, payments, expenses, reports |
+| `x_society.facility_manager` | Facility Manager | Facilities and booking approvals |
+
+## 6. Business Logic
+
+- **Complaint Dates**: Auto-set `opened_on`, `resolved_at` on status change
+- **Double Booking Prevention**: Validates facility slot availability
+- **Payment Updates**: Updates bill `paid_amount` and `status` on payment
+- **Visitor Times**: Auto-set `check_in_time`/`check_out_time`
+- **Booking Validation**: End time > start time, no past dates
+- **Notice Posted Date**: Auto-set when status → published
+
+## 7. Development Workflow
+
+When adding new features:
+
+1. **New Table**: Create in `src/fluent/tables/*.now.ts`, export in `index.now.ts`
+2. **New Role**: Add to `roles.roles.ts`, export in `index.now.ts`
+3. **Business Rule**: Add to `server/businessRules.ts` or create new file
+4. **UI Page**: Create in `ui-pages/*.now.ts`, client components in `client/`
+5. **Build & Deploy**: `npm run build` then `npm run deploy`
+
+Always run `npm run build` after changes to verify compilation.
