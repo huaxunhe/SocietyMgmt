@@ -19,7 +19,7 @@ import {
 export const x_664892_society_0_flat = Table({
     name: 'x_664892_society_0_flat',
     label: 'Flat',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -39,6 +39,9 @@ export const x_664892_society_0_flat = Table({
             label: 'Resident',
             referenceTable: 'sys_user',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         ownership: ChoiceColumn({
             label: 'Ownership',
@@ -47,6 +50,7 @@ export const x_664892_society_0_flat = Table({
                 tenant: { label: 'Tenant' },
             },
             default: 'owner',
+            dropdown: 'dropdown_with_none',
         }),
         move_in_date: DateColumn({
             label: 'Move-in Date',
@@ -57,9 +61,19 @@ export const x_664892_society_0_flat = Table({
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'resident',
+        },
+    ],
 })
 
 /**
@@ -73,7 +87,7 @@ export const x_664892_society_0_maintenance_bill = Table({
         number: 1000,
         prefix: 'MB',
     },
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -85,6 +99,9 @@ export const x_664892_society_0_maintenance_bill = Table({
             label: 'Flat',
             referenceTable: 'x_664892_society_0_flat',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         month_year: StringColumn({
             label: 'Month-Year',
@@ -107,6 +124,7 @@ export const x_664892_society_0_maintenance_bill = Table({
                 overdue: { label: 'Overdue' },
             },
             default: 'unpaid',
+            dropdown: 'dropdown_with_none',
         }),
         payment_date: DateColumn({
             label: 'Payment Date',
@@ -119,12 +137,28 @@ export const x_664892_society_0_maintenance_bill = Table({
                 bank_transfer: { label: 'Bank Transfer' },
                 cheque: { label: 'Cheque' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         remarks: StringColumn({
             label: 'Remarks',
             maxLength: 500,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'flat',
+        },
+        {
+            name: 'index2',
+            unique: true,
+            element: 'number',
+        },
+    ],
 })
 
 /**
@@ -139,7 +173,7 @@ export const x_664892_society_0_service_request = Table({
         number: 1000,
         prefix: 'SR',
     },
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -156,6 +190,7 @@ export const x_664892_society_0_service_request = Table({
                 notice: { label: 'Notice' },
             },
             mandatory: true,
+            dropdown: 'dropdown_with_none',
         }),
         title: StringColumn({
             label: 'Title',
@@ -170,10 +205,16 @@ export const x_664892_society_0_service_request = Table({
             label: 'Opened By',
             referenceTable: 'sys_user',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         flat: ReferenceColumn({
             label: 'Flat',
             referenceTable: 'x_664892_society_0_flat',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         opened_on: DateColumn({
             label: 'Opened On',
@@ -190,10 +231,14 @@ export const x_664892_society_0_service_request = Table({
                 expired: { label: 'Expired' },
             },
             default: 'open',
+            dropdown: 'dropdown_with_none',
         }),
         assigned_to: ReferenceColumn({
             label: 'Assigned To',
             referenceTable: 'sys_user',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
 
         // Complaint-specific fields
@@ -209,6 +254,7 @@ export const x_664892_society_0_service_request = Table({
                 noise: { label: 'Noise' },
                 other: { label: 'Other' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         priority: ChoiceColumn({
             label: 'Priority',
@@ -218,6 +264,7 @@ export const x_664892_society_0_service_request = Table({
                 high: { label: 'High' },
             },
             default: 'medium',
+            dropdown: 'dropdown_with_none',
         }),
         vendor_name: StringColumn({
             label: 'Vendor Name',
@@ -241,6 +288,7 @@ export const x_664892_society_0_service_request = Table({
                 guest_room: { label: 'Guest Room' },
                 swimming_pool: { label: 'Swimming Pool' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         booking_date: DateColumn({
             label: 'Booking Date',
@@ -261,12 +309,37 @@ export const x_664892_society_0_service_request = Table({
         // Notice-specific fields
         pinned: BooleanColumn({
             label: 'Pinned',
-            default: 'false',
+            default: false,
         }),
         expires_on: DateColumn({
             label: 'Expires On',
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'assigned_to',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'flat',
+        },
+        {
+            name: 'index3',
+            unique: true,
+            element: 'number',
+        },
+        {
+            name: 'index4',
+            unique: false,
+            element: 'opened_by',
+        },
+    ],
 })
 
 /**
@@ -280,7 +353,7 @@ export const x_664892_society_0_visitor_log = Table({
         number: 1000,
         prefix: 'VL',
     },
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -306,11 +379,15 @@ export const x_664892_society_0_visitor_log = Table({
                 cab: { label: 'Cab' },
                 other: { label: 'Other' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         host_flat: ReferenceColumn({
             label: 'Host Flat',
             referenceTable: 'x_664892_society_0_flat',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         vehicle_number: StringColumn({
             label: 'Vehicle Number',
@@ -326,6 +403,29 @@ export const x_664892_society_0_visitor_log = Table({
         logged_by: ReferenceColumn({
             label: 'Logged By',
             referenceTable: 'sys_user',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'host_flat',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'logged_by',
+        },
+        {
+            name: 'index3',
+            unique: true,
+            element: 'number',
+        },
+    ],
 })

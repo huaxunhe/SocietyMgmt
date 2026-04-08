@@ -73,8 +73,7 @@ export const preventDoubleBookingSpec = BusinessRule({
     gr.addQuery('request_type', 'facility_booking');
     gr.addQuery('facility', facility);
     gr.addQuery('booking_date', bookingDate);
-    gr.addQuery('status', '!=', 'cancelled');
-    gr.addQuery('status', '!=', 'expired');
+    gr.addQuery('status', 'confirmed');
 
     // Exclude current record for updates
     if (excludeId) {
