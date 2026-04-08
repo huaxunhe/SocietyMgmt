@@ -14,7 +14,7 @@ import {
 export const x_664892_society_0_society = Table({
     name: 'x_664892_society_0_society',
     label: 'Society',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -73,16 +73,26 @@ export const x_664892_society_0_society = Table({
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: true,
+            element: 'code',
+        },
+    ],
 })
 
 // Building within a society
 export const x_664892_society_0_building = Table({
     name: 'x_664892_society_0_building',
     label: 'Building',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -90,6 +100,9 @@ export const x_664892_society_0_building = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         name: StringColumn({
             label: 'Building Name',
@@ -117,19 +130,30 @@ export const x_664892_society_0_building = Table({
                 mixed: { label: 'Mixed Use' },
             },
             default: 'residential',
+            dropdown: 'dropdown_with_none',
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'society',
+        },
+    ],
 })
 
 // Individual unit/apartment
 export const x_664892_society_0_unit = Table({
     name: 'x_664892_society_0_unit',
     label: 'Unit',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -137,11 +161,17 @@ export const x_664892_society_0_unit = Table({
             label: 'Building',
             referenceTable: 'x_664892_society_0_building',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         society: ReferenceColumn({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         unit_number: StringColumn({
             label: 'Unit Number',
@@ -163,6 +193,7 @@ export const x_664892_society_0_unit = Table({
                 shop: { label: 'Shop' },
                 office: { label: 'Office' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         area_sqft: DecimalColumn({
             label: 'Area (Sq.Ft)',
@@ -175,6 +206,7 @@ export const x_664892_society_0_unit = Table({
                 vacant: { label: 'Vacant' },
             },
             default: 'vacant',
+            dropdown: 'dropdown_with_none',
         }),
         status: ChoiceColumn({
             label: 'Status',
@@ -184,13 +216,29 @@ export const x_664892_society_0_unit = Table({
                 under_maintenance: { label: 'Under Maintenance' },
             },
             default: 'vacant',
+            dropdown: 'dropdown_with_none',
         }),
         intercom_number: StringColumn({
             label: 'Intercom Number',
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'building',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'society',
+        },
+    ],
 })

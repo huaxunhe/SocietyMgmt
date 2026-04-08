@@ -14,7 +14,7 @@ import {
 export const x_664892_society_0_resident = Table({
     name: 'x_664892_society_0_resident',
     label: 'Resident',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -22,10 +22,16 @@ export const x_664892_society_0_resident = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         user: ReferenceColumn({
             label: 'User Account',
             referenceTable: 'sys_user',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         first_name: StringColumn({
             label: 'First Name',
@@ -60,6 +66,7 @@ export const x_664892_society_0_resident = Table({
                 family_member: { label: 'Family Member' },
             },
             mandatory: true,
+            dropdown: 'dropdown_with_none',
         }),
         gender: ChoiceColumn({
             label: 'Gender',
@@ -68,6 +75,7 @@ export const x_664892_society_0_resident = Table({
                 female: { label: 'Female' },
                 other: { label: 'Other' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         date_of_birth: DateTimeColumn({
             label: 'Date of Birth',
@@ -81,6 +89,7 @@ export const x_664892_society_0_resident = Table({
                 voter_id: { label: 'Voter ID' },
                 driving_license: { label: 'Driving License' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         id_proof_number: StringColumn({
             label: 'ID Proof Number',
@@ -93,11 +102,11 @@ export const x_664892_society_0_resident = Table({
         }),
         is_primary_resident: BooleanColumn({
             label: 'Primary Resident',
-            default: 'false',
+            default: false,
         }),
         is_committee_member: BooleanColumn({
             label: 'Committee Member',
-            default: 'false',
+            default: false,
         }),
         vehicle_count: IntegerColumn({
             label: 'Vehicle Count',
@@ -111,19 +120,35 @@ export const x_664892_society_0_resident = Table({
                 moved_out: { label: 'Moved Out' },
             },
             default: 'active',
+            dropdown: 'dropdown_with_none',
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'society',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'user',
+        },
+    ],
 })
 
 // Resident-Unit association (junction table for many-to-many)
 export const x_664892_society_0_resident_unit = Table({
     name: 'x_664892_society_0_resident_unit',
     label: 'Resident Unit Association',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -131,11 +156,17 @@ export const x_664892_society_0_resident_unit = Table({
             label: 'Resident',
             referenceTable: 'x_664892_society_0_resident',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         unit: ReferenceColumn({
             label: 'Unit',
             referenceTable: 'x_664892_society_0_unit',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         relationship_type: ChoiceColumn({
             label: 'Relationship Type',
@@ -145,10 +176,11 @@ export const x_664892_society_0_resident_unit = Table({
                 family: { label: 'Family Member' },
             },
             mandatory: true,
+            dropdown: 'dropdown_with_none',
         }),
         is_primary: BooleanColumn({
             label: 'Primary Contact',
-            default: 'false',
+            default: false,
         }),
         start_date: DateTimeColumn({
             label: 'Start Date',
@@ -158,7 +190,22 @@ export const x_664892_society_0_resident_unit = Table({
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'resident',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'unit',
+        },
+    ],
 })

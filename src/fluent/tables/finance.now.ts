@@ -14,7 +14,7 @@ import {
 export const x_664892_society_0_maintenance_charge = Table({
     name: 'x_664892_society_0_maintenance_charge',
     label: 'Maintenance Charge',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -22,6 +22,9 @@ export const x_664892_society_0_maintenance_charge = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         name: StringColumn({
             label: 'Charge Name',
@@ -35,6 +38,7 @@ export const x_664892_society_0_maintenance_charge = Table({
                 per_unit: { label: 'Per Unit' },
             },
             mandatory: true,
+            dropdown: 'dropdown_with_none',
         }),
         amount: DecimalColumn({
             label: 'Amount',
@@ -49,6 +53,7 @@ export const x_664892_society_0_maintenance_charge = Table({
                 yearly: { label: 'Yearly' },
             },
             default: 'monthly',
+            dropdown: 'dropdown_with_none',
         }),
         effective_from: DateTimeColumn({
             label: 'Effective From',
@@ -63,9 +68,19 @@ export const x_664892_society_0_maintenance_charge = Table({
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'society',
+        },
+    ],
 })
 
 // Maintenance bills/invoices
@@ -76,7 +91,7 @@ export const x_664892_society_0_bill = Table({
         number: 1000,
         prefix: 'BILL',
     },
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -88,15 +103,24 @@ export const x_664892_society_0_bill = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         unit: ReferenceColumn({
             label: 'Unit',
             referenceTable: 'x_664892_society_0_unit',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         resident: ReferenceColumn({
             label: 'Resident',
             referenceTable: 'x_664892_society_0_resident',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         bill_period_month: IntegerColumn({
             label: 'Bill Period Month',
@@ -137,6 +161,7 @@ export const x_664892_society_0_bill = Table({
                 cancelled: { label: 'Cancelled' },
             },
             default: 'draft',
+            dropdown: 'dropdown_with_none',
         }),
         bill_date: DateTimeColumn({
             label: 'Bill Date',
@@ -147,16 +172,41 @@ export const x_664892_society_0_bill = Table({
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: true,
+            element: 'bill_number',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'resident',
+        },
+        {
+            name: 'index3',
+            unique: false,
+            element: 'society',
+        },
+        {
+            name: 'index4',
+            unique: false,
+            element: 'unit',
+        },
+    ],
 })
 
 // Bill line items
 export const x_664892_society_0_bill_line = Table({
     name: 'x_664892_society_0_bill_line',
     label: 'Bill Line Item',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -164,10 +214,16 @@ export const x_664892_society_0_bill_line = Table({
             label: 'Bill',
             referenceTable: 'x_664892_society_0_bill',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         charge: ReferenceColumn({
             label: 'Maintenance Charge',
             referenceTable: 'x_664892_society_0_maintenance_charge',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         charge_name: StringColumn({
             label: 'Charge Name',
@@ -188,6 +244,21 @@ export const x_664892_society_0_bill_line = Table({
             label: 'Description',
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'bill',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'charge',
+        },
+    ],
 })
 
 // Payments received
@@ -198,7 +269,7 @@ export const x_664892_society_0_payment = Table({
         number: 1000,
         prefix: 'PAY',
     },
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -210,19 +281,31 @@ export const x_664892_society_0_payment = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         bill: ReferenceColumn({
             label: 'Bill',
             referenceTable: 'x_664892_society_0_bill',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         unit: ReferenceColumn({
             label: 'Unit',
             referenceTable: 'x_664892_society_0_unit',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         resident: ReferenceColumn({
             label: 'Resident',
             referenceTable: 'x_664892_society_0_resident',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         amount: DecimalColumn({
             label: 'Amount',
@@ -243,6 +326,7 @@ export const x_664892_society_0_payment = Table({
                 online: { label: 'Online' },
             },
             mandatory: true,
+            dropdown: 'dropdown_with_none',
         }),
         transaction_id: StringColumn({
             label: 'Transaction ID',
@@ -268,6 +352,7 @@ export const x_664892_society_0_payment = Table({
                 cancelled: { label: 'Cancelled' },
             },
             default: 'pending',
+            dropdown: 'dropdown_with_none',
         }),
         notes: StringColumn({
             label: 'Notes',
@@ -275,9 +360,39 @@ export const x_664892_society_0_payment = Table({
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'bill',
+        },
+        {
+            name: 'index2',
+            unique: true,
+            element: 'payment_number',
+        },
+        {
+            name: 'index3',
+            unique: false,
+            element: 'resident',
+        },
+        {
+            name: 'index4',
+            unique: false,
+            element: 'society',
+        },
+        {
+            name: 'index5',
+            unique: false,
+            element: 'unit',
+        },
+    ],
 })
 
 // Expense tracking
@@ -288,7 +403,7 @@ export const x_664892_society_0_expense = Table({
         number: 1000,
         prefix: 'EXP',
     },
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -300,6 +415,9 @@ export const x_664892_society_0_expense = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         expense_date: DateTimeColumn({
             label: 'Expense Date',
@@ -319,6 +437,7 @@ export const x_664892_society_0_expense = Table({
                 other: { label: 'Other' },
             },
             mandatory: true,
+            dropdown: 'dropdown_with_none',
         }),
         description: StringColumn({
             label: 'Description',
@@ -340,6 +459,7 @@ export const x_664892_society_0_expense = Table({
                 neft: { label: 'NEFT/RTGS' },
                 upi: { label: 'UPI' },
             },
+            dropdown: 'dropdown_with_none',
         }),
         invoice_number: StringColumn({
             label: 'Invoice Number',
@@ -347,6 +467,9 @@ export const x_664892_society_0_expense = Table({
         approved_by: ReferenceColumn({
             label: 'Approved By',
             referenceTable: 'sys_user',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         status: ChoiceColumn({
             label: 'Status',
@@ -358,6 +481,7 @@ export const x_664892_society_0_expense = Table({
                 cancelled: { label: 'Cancelled' },
             },
             default: 'draft',
+            dropdown: 'dropdown_with_none',
         }),
         notes: StringColumn({
             label: 'Notes',
@@ -365,7 +489,27 @@ export const x_664892_society_0_expense = Table({
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'approved_by',
+        },
+        {
+            name: 'index2',
+            unique: true,
+            element: 'expense_number',
+        },
+        {
+            name: 'index3',
+            unique: false,
+            element: 'society',
+        },
+    ],
 })

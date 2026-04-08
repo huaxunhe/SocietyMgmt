@@ -12,7 +12,7 @@ import {
 export const x_664892_society_0_vehicle = Table({
     name: 'x_664892_society_0_vehicle',
     label: 'Vehicle',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -20,15 +20,24 @@ export const x_664892_society_0_vehicle = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         resident: ReferenceColumn({
             label: 'Resident',
             referenceTable: 'x_664892_society_0_resident',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         unit: ReferenceColumn({
             label: 'Unit',
             referenceTable: 'x_664892_society_0_unit',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         vehicle_number: StringColumn({
             label: 'Vehicle Number',
@@ -44,6 +53,7 @@ export const x_664892_society_0_vehicle = Table({
                 bicycle: { label: 'Bicycle' },
             },
             mandatory: true,
+            dropdown: 'dropdown_with_none',
         }),
         vehicle_make: StringColumn({
             label: 'Make',
@@ -66,6 +76,9 @@ export const x_664892_society_0_vehicle = Table({
         parking_slot: ReferenceColumn({
             label: 'Parking Slot',
             referenceTable: 'x_664892_society_0_parking_slot',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         status: ChoiceColumn({
             label: 'Status',
@@ -74,19 +87,50 @@ export const x_664892_society_0_vehicle = Table({
                 inactive: { label: 'Inactive' },
             },
             default: 'active',
+            dropdown: 'dropdown_with_none',
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'parking_slot',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'resident',
+        },
+        {
+            name: 'index3',
+            unique: false,
+            element: 'society',
+        },
+        {
+            name: 'index4',
+            unique: false,
+            element: 'unit',
+        },
+        {
+            name: 'index5',
+            unique: true,
+            element: 'vehicle_number',
+        },
+    ],
 })
 
 // Parking slots
 export const x_664892_society_0_parking_slot = Table({
     name: 'x_664892_society_0_parking_slot',
     label: 'Parking Slot',
-    actions: ['read', 'update', 'create', 'delete'],
+    actions: ['read', 'update', 'delete', 'create'],
     allowNewFields: true,
     schema: {
         sys_id: GuidColumn({ primary: true }),
@@ -94,10 +138,16 @@ export const x_664892_society_0_parking_slot = Table({
             label: 'Society',
             referenceTable: 'x_664892_society_0_society',
             mandatory: true,
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         building: ReferenceColumn({
             label: 'Building',
             referenceTable: 'x_664892_society_0_building',
+            attributes: {
+                encode_utf8: false,
+            },
         }),
         slot_number: StringColumn({
             label: 'Slot Number',
@@ -117,6 +167,7 @@ export const x_664892_society_0_parking_slot = Table({
                 basement: { label: 'Basement' },
             },
             default: 'open',
+            dropdown: 'dropdown_with_none',
         }),
         vehicle_type: ChoiceColumn({
             label: 'Vehicle Type Allowed',
@@ -126,6 +177,7 @@ export const x_664892_society_0_parking_slot = Table({
                 any: { label: 'Any' },
             },
             default: 'any',
+            dropdown: 'dropdown_with_none',
         }),
         allocation_type: ChoiceColumn({
             label: 'Allocation Type',
@@ -135,6 +187,7 @@ export const x_664892_society_0_parking_slot = Table({
                 common: { label: 'Common' },
             },
             default: 'reserved',
+            dropdown: 'dropdown_with_none',
         }),
         monthly_charge: StringColumn({
             label: 'Monthly Charge',
@@ -148,10 +201,26 @@ export const x_664892_society_0_parking_slot = Table({
                 maintenance: { label: 'Under Maintenance' },
             },
             default: 'available',
+            dropdown: 'dropdown_with_none',
         }),
         active: BooleanColumn({
             label: 'Active',
-            default: 'true',
+            default: true,
         }),
     },
+    attributes: {
+        enforce_dot_walk_cross_scope_access: true,
+    },
+    index: [
+        {
+            name: 'index',
+            unique: false,
+            element: 'building',
+        },
+        {
+            name: 'index2',
+            unique: false,
+            element: 'society',
+        },
+    ],
 })
